@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>To Valhalla — Ride Eternal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0806;
+    --bg-dust: #120d09;
+    --surface: #1a1410;
+    --surface-raised: #241c17;
+    --border: rgba(220, 220, 220, 0.08);
+    --border-strong: rgba(220, 220, 220, 0.2);
+    --chrome: #dcdcdc;
+    --chrome-bright: #f5f5f5;
+    --bone: #e8e3d5;
+    --chrome-dim: #8a8580;
+    --chrome-dimmer: #5a5650;
+    --blood: #a01e1e;
+    --blood-bright: #c52020;
+    --rust: #b8541a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--bone);
+    font-family: 'Inter', system-ui, sans-serif;
+    background-image:
+      radial-gradient(ellipse 1100px 600px at 50% 0%, rgba(184, 84, 26, 0.08), transparent 70%),
+      radial-gradient(ellipse 800px 400px at 50% 100%, rgba(160, 30, 30, 0.06), transparent 70%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  .hero {
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .hero .overline {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.6em;
+    color: var(--blood-bright);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    padding-left: 0.6em;
+  }
+
+  .hero h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: clamp(3rem, 8vw, 6rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 0.95;
+    background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 45%, #8a8580 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(220, 220, 220, 0.15));
+  }
+
+  .hero .tagline {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.45em;
+    font-size: 0.875rem;
+    color: var(--chrome-dim);
+    text-transform: uppercase;
+    margin-top: 1.25rem;
+    padding-left: 0.45em;
+  }
+
+  .hero .chant {
+    margin-top: 2rem;
+    display: inline-flex;
+    gap: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--rust);
+    text-transform: uppercase;
+  }
+  .hero .chant span { opacity: 0.85; }
+  .hero .chant .sep { width: 24px; height: 1px; background: var(--rust); opacity: 0.5; }
+
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--chrome);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 22px;
+    background: var(--blood);
+  }
+
+  .section-title .count {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--chrome-dim);
+    letter-spacing: 0.15em;
+    font-weight: 400;
+  }
+
+  section + section { margin-top: 3.5rem; }
+
+  .systems-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .system-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    color: var(--bone);
+    font-family: inherit;
+  }
+
+  .system-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--chrome), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .system-card:hover {
+    background: var(--surface-raised);
+    border-color: var(--chrome-dim);
+    transform: translateY(-2px);
+  }
+
+  .system-card:hover::before { opacity: 1; }
+
+  .system-card .name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+    color: var(--chrome);
+  }
+
+  .system-card .meta {
+    font-size: 0.7rem;
+    color: var(--chrome-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+  }
+
+  .system-card .extensions {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.675rem;
+    color: var(--chrome-dimmer);
+    margin-top: 0.85rem;
+  }
+
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    text-align: left;
+    color: var(--bone);
+    font-family: inherit;
+    width: 100%;
+  }
+
+  .game-card:hover {
+    background: var(--surface-raised);
+    border-color: var(--blood);
+    box-shadow: 0 0 0 1px rgba(160, 30, 30, 0.2);
+  }
+
+  .game-card .title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 1.75rem;
+    color: var(--chrome);
+  }
+
+  .game-card .system {
+    font-size: 0.7rem;
+    color: var(--blood-bright);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+  }
+
+  .game-card .size {
+    font-size: 0.675rem;
+    color: var(--chrome-dimmer);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 0.5rem;
+  }
+
+  .game-card .delete-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    color: var(--chrome-dimmer);
+    cursor: pointer;
+    border-radius: 2px;
+    opacity: 0;
+    transition: all 0.15s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-card:hover .delete-btn { opacity: 1; }
+
+  .game-card .delete-btn:hover {
+    background: var(--blood);
+    color: var(--bone);
+  }
+
+  .empty-state {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--chrome-dim);
+    border: 1px dashed var(--border);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.01);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .empty-state p { margin-bottom: 0.5rem; }
+  .empty-state .hint {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: var(--chrome-dimmer);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 1rem;
+  }
+
+  .dropzone-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 6, 0.94);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+  }
+
+  .dropzone-overlay.active { display: flex; }
+
+  .dropzone-box {
+    border: 2px dashed var(--blood);
+    border-radius: 2px;
+    padding: 4rem 5rem;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    color: var(--chrome);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    font-size: 1.25rem;
+    background: rgba(160, 30, 30, 0.04);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .dropzone-box .sub {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: var(--blood-bright);
+    letter-spacing: 0.5em;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.88; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.01); }
+  }
+
+  .footer-note {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    color: var(--chrome-dimmer);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid var(--border);
+    line-height: 1.8;
+  }
+
+  .footer-note a { color: var(--blood-bright); text-decoration: none; }
+  .footer-note a:hover { color: var(--blood); }
+  .footer-note em {
+    font-style: normal;
+    color: var(--chrome-dim);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: var(--surface-raised);
+    border: 1px solid var(--blood);
+    color: var(--chrome);
+    padding: 0.875rem 1.5rem;
+    border-radius: 2px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="overline">I Live · I Die · I Live Again</div>
+    <h1>To Valhalla</h1>
+    <p class="tagline">Ride Eternal · Shiny and Chrome</p>
+    <div class="chant">
+      <span>V8</span><span class="sep"></span>
+      <span>V8</span><span class="sep"></span>
+      <span>V8</span>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2 class="section-title">
+        Witnessed Rigs
+        <span class="count" id="libraryCount"></span>
+      </h2>
+      <div id="library"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Choose Your Steed</h2>
+      <div class="systems-grid" id="systemsGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer-note">
+    Bring thine own cartridges — the garage keeps them in thy browser's blood bag, never upon the server's iron.<br>
+    <em>Powered by <a href="https://emulatorjs.org/" target="_blank" rel="noopener">EmulatorJS</a></em>
+  </footer>
+
+  <input type="file" id="fileInput" hidden>
+  <div class="dropzone-overlay" id="dropzone">
+    <div class="dropzone-box">
+      Witness Me
+      <span class="sub">Release to Chrome</span>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+  const SYSTEMS = [
+    { id: 'arcade',    name: 'Arcade',            meta: 'MAME / FBNeo',     extensions: ['.zip'],                                       accept: '.zip' },
+    { id: 'nes',       name: 'Nintendo',          meta: '8-bit · NES',      extensions: ['.nes'],                                       accept: '.nes' },
+    { id: 'snes',      name: 'Super Nintendo',    meta: '16-bit · SNES',    extensions: ['.smc', '.sfc'],                               accept: '.smc,.sfc' },
+    { id: 'n64',       name: 'Nintendo 64',       meta: '64-bit · N64',     extensions: ['.n64', '.z64', '.v64'],                       accept: '.n64,.z64,.v64' },
+    { id: 'gb',        name: 'Game Boy',          meta: 'Handheld · GB/GBC',extensions: ['.gb', '.gbc'],                                accept: '.gb,.gbc' },
+    { id: 'gba',       name: 'Game Boy Advance',  meta: 'Handheld · GBA',   extensions: ['.gba'],                                       accept: '.gba' },
+    { id: 'nds',       name: 'Nintendo DS',       meta: 'Handheld · NDS',   extensions: ['.nds'],                                       accept: '.nds' },
+    { id: 'segaMD',    name: 'Sega Genesis',      meta: '16-bit · MD',      extensions: ['.md', '.gen', '.smd', '.bin'],                accept: '.md,.gen,.smd,.bin' },
+    { id: 'segaMS',    name: 'Master System',     meta: '8-bit · SMS',      extensions: ['.sms'],                                       accept: '.sms' },
+    { id: 'segaGG',    name: 'Game Gear',         meta: 'Handheld · GG',    extensions: ['.gg'],                                        accept: '.gg' },
+    { id: 'sega32x',   name: 'Sega 32X',          meta: 'Add-on · 32X',     extensions: ['.32x'],                                       accept: '.32x' },
+    { id: 'segaCD',    name: 'Sega CD',           meta: 'CD · Mega-CD',     extensions: ['.iso', '.bin', '.cue', '.chd'],               accept: '.iso,.bin,.cue,.chd' },
+    { id: 'psx',       name: 'PlayStation',       meta: 'Disc · PSX',       extensions: ['.iso', '.bin', '.cue', '.chd', '.pbp'],       accept: '.iso,.bin,.cue,.chd,.pbp' },
+    { id: 'atari2600', name: 'Atari 2600',        meta: '8-bit · VCS',      extensions: ['.a26', '.bin'],                               accept: '.a26,.bin' },
+    { id: 'atari7800', name: 'Atari 7800',        meta: '8-bit · 7800',     extensions: ['.a78'],                                       accept: '.a78' },
+    { id: 'pce',       name: 'TurboGrafx-16',     meta: 'PC Engine',        extensions: ['.pce'],                                       accept: '.pce' },
+  ];
+
+  const DB_NAME = 'valhalla';
+  const DB_VERSION = 1;
+  const STORE = 'roms';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onerror = () => reject(req.error);
+      req.onsuccess = () => resolve(req.result);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+      };
+    });
+  }
+
+  async function dbPut(rom) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).put(rom);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function dbGetAll() {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const r = db.transaction(STORE, 'readonly').objectStore(STORE).getAll();
+      r.onsuccess = () => resolve(r.result || []);
+      r.onerror = () => reject(r.error);
+    });
+  }
+
+  async function dbDelete(id) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function formatBytes(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+    if (b < 1073741824) return (b/1048576).toFixed(1) + ' MB';
+    return (b/1073741824).toFixed(2) + ' GB';
+  }
+
+  function systemById(id) { return SYSTEMS.find(s => s.id === id); }
+  function uuid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  let pendingSystem = null;
+
+  function renderSystems() {
+    const grid = document.getElementById('systemsGrid');
+    grid.innerHTML = '';
+    SYSTEMS.forEach(sys => {
+      const btn = document.createElement('button');
+      btn.className = 'system-card';
+      btn.innerHTML = `
+        <div class="name">${sys.name}</div>
+        <div class="meta">${sys.meta}</div>
+        <div class="extensions">${sys.extensions.join('  ·  ')}</div>
+      `;
+      btn.addEventListener('click', () => pickFile(sys));
+      grid.appendChild(btn);
+    });
+  }
+
+  async function renderLibrary() {
+    const container = document.getElementById('library');
+    const count = document.getElementById('libraryCount');
+    let roms;
+    try {
+      roms = await dbGetAll();
+    } catch (err) {
+      container.innerHTML = `<div class="empty-state"><p>Blood bag unreachable</p><p class="hint">${escapeHtml(err.message)}</p></div>`;
+      return;
+    }
+    roms.sort((a, b) => b.added - a.added);
+    count.textContent = roms.length ? `${roms.length} CHROMED` : '';
+
+    if (!roms.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <p>No Rigs Yet Witnessed</p>
+          <p class="hint">Choose a steed below, or drop a cartridge anywhere on this page. V8.</p>
+        </div>`;
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'library-grid';
+    roms.forEach(rom => {
+      const sys = systemById(rom.system);
+      const card = document.createElement('button');
+      card.className = 'game-card';
+      card.innerHTML = `
+        <button class="delete-btn" aria-label="Cast out" title="Cast out">✕</button>
+        <div class="title" title="${escapeHtml(rom.name)}">${escapeHtml(rom.name)}</div>
+        <div class="system">${sys ? sys.name : rom.system}</div>
+        <div class="size">${formatBytes(rom.size)}</div>
+      `;
+      card.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) return;
+        location.href = `play.html?id=${encodeURIComponent(rom.id)}`;
+      });
+      card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!confirm(`Cast "${rom.name}" out into the sands?`)) return;
+        await dbDelete(rom.id);
+        toast('Mediocre');
+        renderLibrary();
+      });
+      grid.appendChild(card);
+    });
+    container.innerHTML = '';
+    container.appendChild(grid);
+  }
+
+  function pickFile(sys) {
+    pendingSystem = sys;
+    const input = document.getElementById('fileInput');
+    input.accept = sys.accept;
+    input.value = '';
+    input.click();
+  }
+
+  async function handleFile(file, sys) {
+    if (!file) return;
+    try {
+      toast(`Chroming ${file.name}...`);
+      const data = await file.arrayBuffer();
+      const rom = {
+        id: uuid(),
+        name: file.name.replace(/\.[^.]+$/, ''),
+        filename: file.name,
+        system: sys.id,
+        size: file.size,
+        added: Date.now(),
+        data: data,
+      };
+      await dbPut(rom);
+      toast(`${rom.name} witnessed`);
+      await renderLibrary();
+      setTimeout(() => {
+        location.href = `play.html?id=${encodeURIComponent(rom.id)}`;
+      }, 500);
+    } catch (err) {
+      console.error(err);
+      toast('Rig failed to start: ' + err.message);
+    }
+  }
+
+  document.getElementById('fileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && pendingSystem) handleFile(file, pendingSystem);
+  });
+
+  const dropzone = document.getElementById('dropzone');
+  let dragCounter = 0;
+
+  document.addEventListener('dragenter', (e) => {
+    if (!e.dataTransfer?.types?.includes('Files')) return;
+    e.preventDefault();
+    dragCounter++;
+    dropzone.classList.add('active');
+  });
+  document.addEventListener('dragleave', () => {
+    dragCounter--;
+    if (dragCounter <= 0) {
+      dragCounter = 0;
+      dropzone.classList.remove('active');
+    }
+  });
+  document.addEventListener('dragover', (e) => {
+    if (e.dataTransfer?.types?.includes('Files')) e.preventDefault();
+  });
+  document.addEventListener('drop', async (e) => {
+    if (!e.dataTransfer?.files?.length) return;
+    e.preventDefault();
+    dragCounter = 0;
+    dropzone.classList.remove('active');
+    const file = e.dataTransfer.files[0];
+    const ext = '.' + file.name.toLowerCase().split('.').pop();
+    const sys = SYSTEMS.find(s => s.extensions.includes(ext));
+    if (!sys) {
+      toast(`Unknown steed: ${ext}`);
+      return;
+    }
+    await handleFile(file, sys);
+  });
+
+  renderSystems();
+  renderLibrary();
+</script>
+</body>
+</html>

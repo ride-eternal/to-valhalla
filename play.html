@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Riding — To Valhalla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; color: #e8e3d5; font-family: 'Inter', system-ui, sans-serif; overflow: hidden; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 0.65rem 1rem;
+    background: #0a0806;
+    border-bottom: 1px solid rgba(220, 220, 220, 0.08);
+    height: 52px;
+  }
+  .toolbar a.back {
+    color: #dcdcdc; text-decoration: none;
+    font-family: 'Oswald', sans-serif; font-weight: 600;
+    font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid rgba(160, 30, 30, 0.5);
+    border-radius: 2px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .toolbar a.back:hover {
+    background: rgba(160, 30, 30, 0.15);
+    border-color: #c52020;
+    color: #f5f5f5;
+  }
+  .toolbar .game-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #dcdcdc;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    flex: 1;
+  }
+  .toolbar .system-name {
+    font-family: 'Oswald', sans-serif;
+    color: #c52020;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  #stage { width: 100vw; height: calc(100vh - 52px); position: relative; background: #000; }
+  #game { width: 100%; height: 100%; }
+
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 1.5rem; padding: 2rem; text-align: center;
+    background: #0a0806;
+    z-index: 10;
+  }
+  .overlay.loading {
+    color: #dcdcdc;
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .overlay.loading .chant {
+    font-size: 0.7rem;
+    color: #b8541a;
+    letter-spacing: 0.4em;
+    margin-top: 0.25rem;
+  }
+  .overlay.error { color: #c52020; }
+  .overlay.error .msg {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    max-width: 500px;
+    line-height: 1.6;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #dcdcdc;
+  }
+  .overlay.error a {
+    color: #dcdcdc; text-decoration: none;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid rgba(160, 30, 30, 0.6);
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .overlay.error a:hover { background: rgba(160, 30, 30, 0.15); border-color: #c52020; }
+
+  .spinner {
+    width: 44px; height: 44px;
+    border: 2px solid rgba(220, 220, 220, 0.1);
+    border-top-color: #dcdcdc;
+    border-right-color: #a01e1e;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <a href="index.html" class="back">← Garage</a>
+    <span class="game-name" id="gameName">Loading…</span>
+    <span class="system-name" id="systemName"></span>
+  </div>
+  <div id="stage">
+    <div class="overlay loading" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div>Priming the V8</div>
+      <div class="chant">I Live · I Die · I Live Again</div>
+    </div>
+    <div class="overlay error" id="errorOverlay" hidden>
+      <div class="msg" id="errorMsg"></div>
+      <a href="index.html">← Return to the Garage</a>
+    </div>
+    <div id="game"></div>
+  </div>
+
+<script>
+  const SYS_MAP = {
+    arcade:    { core: 'arcade',    name: 'Arcade' },
+    nes:       { core: 'nes',       name: 'Nintendo' },
+    snes:      { core: 'snes',      name: 'Super Nintendo' },
+    n64:       { core: 'n64',       name: 'Nintendo 64' },
+    gb:        { core: 'gb',        name: 'Game Boy' },
+    gba:       { core: 'gba',       name: 'Game Boy Advance' },
+    nds:       { core: 'nds',       name: 'Nintendo DS' },
+    segaMD:    { core: 'segaMD',    name: 'Sega Genesis' },
+    segaMS:    { core: 'segaMS',    name: 'Master System' },
+    segaGG:    { core: 'segaGG',    name: 'Game Gear' },
+    sega32x:   { core: 'sega32x',   name: 'Sega 32X' },
+    segaCD:    { core: 'segaCD',    name: 'Sega CD' },
+    psx:       { core: 'psx',       name: 'PlayStation' },
+    atari2600: { core: 'atari2600', name: 'Atari 2600' },
+    atari7800: { core: 'atari7800', name: 'Atari 7800' },
+    pce:       { core: 'pce',       name: 'TurboGrafx-16' },
+  };
+
+  const DB_NAME = 'valhalla';
+  const STORE = 'roms';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const r = indexedDB.open(DB_NAME, 1);
+      r.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+      };
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  async function dbGet(id) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const r = db.transaction(STORE, 'readonly').objectStore(STORE).get(id);
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+
+  function showError(msg) {
+    document.getElementById('loadingOverlay').hidden = true;
+    const err = document.getElementById('errorOverlay');
+    document.getElementById('errorMsg').textContent = msg;
+    err.hidden = false;
+  }
+
+  function hideLoading() {
+    const loading = document.getElementById('loadingOverlay');
+    if (loading) loading.hidden = true;
+  }
+
+  async function init() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    if (!id) return showError('No cartridge specified');
+
+    let rom;
+    try {
+      rom = await dbGet(id);
+    } catch (err) {
+      return showError('Blood bag unreachable: ' + err.message);
+    }
+    if (!rom) return showError('Rig not found in the garage');
+
+    const sys = SYS_MAP[rom.system];
+    if (!sys) return showError('Unknown machine: ' + rom.system);
+
+    document.getElementById('gameName').textContent = rom.name;
+    document.getElementById('systemName').textContent = sys.name;
+    document.title = rom.name + ' — To Valhalla';
+
+    const blob = new Blob([rom.data], { type: 'application/octet-stream' });
+    const blobUrl = URL.createObjectURL(blob);
+
+    window.EJS_player = '#game';
+    window.EJS_core = sys.core;
+    window.EJS_gameUrl = blobUrl;
+    window.EJS_gameName = rom.name;
+    window.EJS_gameID = rom.id;
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_startOnLoaded = true;
+    window.EJS_backgroundColor = '#000000';
+    window.EJS_color = '#a01e1e';
+    window.EJS_ready = hideLoading;
+    window.EJS_onGameStart = hideLoading;
+
+    const loader = document.createElement('script');
+    loader.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+    loader.onload = () => setTimeout(hideLoading, 800);
+    loader.onerror = () => showError('Failed to summon the engine — check your network');
+    document.body.appendChild(loader);
+
+    setTimeout(hideLoading, 12000);
+  }
+
+  init();
+</script>
+</body>
+</html>
