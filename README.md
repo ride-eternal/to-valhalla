@@ -77,9 +77,51 @@ Supply your own, the same way you supply ROMs.
 
 You asked about this in chat — worth repeating here. Tekken 3 arcade runs on Namco System 12, which the EmulatorJS arcade core (MAME 2003-Plus) does **not** support. The playable path is the **PlayStation port** — pick PlayStation from the steed menu and load the Tekken 3 BIN/CUE or CHD. Runs smoothly.
 
-## Arcade romset note
+## Arcade romsets — read this before loading ZIPs
 
-EmulatorJS's arcade core is MAME 2003-Plus. Romsets from modern MAME builds often won't boot. If a ZIP doesn't load, you either need a 2003-Plus-compatible set or a game covered by FBNeo.
+Arcade emulation is the most version-sensitive thing in retro gaming. There are **two separate arcade steeds** in this launcher, and they need **different romset packs**:
+
+### Arcade · MAME (uses MAME 2003-Plus)
+
+Accepts romsets from the **MAME 0.78 / MAME 2003-Plus** era. These are often labeled:
+
+- `MAME 2003-Plus` / `mame2003plus`
+- `MAME 0.78`
+- `libretro MAME 2003 Plus non-merged`
+
+If you have a modern MAME romset (0.200+), **it will not work here**. MAME is not backward-compatible across versions. You need to find a 2003-Plus romset pack.
+
+### Arcade · FBNeo (FinalBurn Neo)
+
+Accepts romsets from a specific **FBNeo** build. Labeled as:
+
+- `FBNeo v1.0.0.X` (match the version — FBNeo bumps frequently)
+- `FinalBurn Neo romset`
+
+FBNeo and MAME use completely different romset conventions. A MAME ZIP will give you the exact error you saw:
+
+```
+FBNeo Error: Romset is unknown
+```
+
+That's FBNeo saying "I have no record of this game" — because the ZIP's internal filenames and hashes don't match FBNeo's database.
+
+### Which should I use?
+
+- **Most classic arcade games** (up to ~1995): either works, match your romset pack
+- **Capcom fighting games** (Street Fighter II, Marvel vs Capcom, etc.): FBNeo handles CPS1/CPS2 cleanly
+- **Neo Geo**: FBNeo, with a `neogeo.zip` BIOS file loaded alongside
+- **Namco System 12 (Tekken 3 arcade), Sega Model 2/3, anything post-1998 3D**: neither core can run these. Use the console port instead.
+
+### How to tell which romset you have
+
+Open the ZIP without extracting. Look at the filename conventions and file count:
+
+- MAME 2003-Plus sets have filenames like `pgm.zip` with specific CRC-matched ROM chip files inside
+- FBNeo sets often have a version string in the download pack name
+- If the download pack was named `MAME 0.260` or `MAME current` — it won't work in either EmulatorJS core
+
+The easiest path: find a pack explicitly labeled **"MAME 2003-Plus"** or **"FBNeo"** and use the corresponding steed.
 
 ## Adding or changing systems
 
